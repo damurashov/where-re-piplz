@@ -29,3 +29,15 @@ class CvDefaultDetector:
 		rectangles = non_max_suppression(rectangles, probs=None, overlapThresh=0.65)
 
 		return rectangles
+
+
+class HaarCascadeDetector:
+
+	def __init__(self):
+		self.detector = cv2.CascadeClassifier('haarcascade_upperbody.xml')
+
+	def detect(self, image):
+		# gray_frame = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+		return self.detector.detectMultiScale(image, 1.3, 3)
+
+
