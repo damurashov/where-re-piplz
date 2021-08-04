@@ -42,7 +42,7 @@ class HaarCascadeDetector:
 		return self.detector.detectMultiScale(image, 1.3, 3)
 
 
-class YoloV5Detector:
+class YoloV5TorchDetector:
 	"""
 	https://towardsdatascience.com/implementing-real-time-object-detection-system-using-pytorch-and-opencv-70bac41148f7
 	"""
