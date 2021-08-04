@@ -7,6 +7,7 @@ from __future__ import print_function
 from imutils.object_detection import non_max_suppression
 import numpy as np
 import cv2
+from torch import hub, tensor
 
 
 class CvDefaultDetector:
@@ -41,3 +42,34 @@ class HaarCascadeDetector:
 		return self.detector.detectMultiScale(image, 1.3, 3)
 
 
+class YoloV5Detector:
+	"""
+	https://towardsdatascience.com/implementing-real-time-object-detection-system-using-pytorch-and-opencv-70bac41148f7
+	"""
+
+	def __init__(self):
+		self.model = hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+
+	def _score_frame(self, image):
+		device = 'cpu'
+		self.model.to(device)
+		# image = [tensor(image)]
+		# image = tensor(image)l
+		results = self.model(image.real)
+		labels = results.xyxyn[0][:, -1].numpy()
+		cord = results.xyxyn[0][:, :-1].numpy()
+
+		return labels, cord
+
+
+	def detect(self, image):
+		labels, cords = self._score_frame(image)
+
+		rectangles = []
+		for i in range(len(cords)):
+			xyxy = [image.shape[1], image.shape[0], image.shape[1], image.shape[0], ]
+			cord = [int(cords[i][j] * xyxy[j]) for j in range(4)]
+
+			rectangles += [cord]
+
+		return rectangles  # [(x, y, w, h, score), ...]
