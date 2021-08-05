@@ -48,14 +48,10 @@ class YoloV5TorchDetector:
 	"""
 
 	def __init__(self):
-		self.model = hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+		self.model = hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True).to('cpu')
 
 	def _score_frame(self, image):
-		device = 'cpu'
-		self.model.to(device)
-		# image = [tensor(image)]
-		# image = tensor(image)l
-		results = self.model(image.real)
+		results = self.model(image.real, size=128, augment=False)
 		labels = results.xyxyn[0][:, -1].numpy()
 		cord = results.xyxyn[0][:, :-1].numpy()
 
